@@ -164,7 +164,7 @@ A different mouse on the same port was recognised at once. Why this one answers 
 Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)]
 ```
 
-`wifip2pd` is a macOS Wi-Fi service. The `Macmini8,1` identity implies Apple Wi-Fi hardware, the service is asked to prepare for sleep, never answers, and macOS waits out the timeout. Adding the Intel card did not change it, because `itlwm` does not present itself as native Wi-Fi.
+`wifip2pd` is a macOS Wi-Fi service. The `Macmini8,1` identity implies Apple Wi-Fi hardware, the service is asked to prepare for sleep, never answers, and macOS waits out the timeout. The Intel card does not help, because `itlwm` does not present itself as native Wi-Fi.
 
 **Fix.** None yet. The service is protected by System Integrity Protection.
 
@@ -213,7 +213,7 @@ The boot argument `igfxonln=1` does the same.
 
 **Status:** resolved
 
-**Background.** An Intel Wireless-AC 9560 module was added to the M.2 slot after the install. macOS lists it as PCI device `8086:a370`.
+**Background.** The wireless card is an Intel Wireless-AC 9560 module in the M.2 slot. macOS lists it as PCI device `8086:a370`.
 
 **Decision.**
 
@@ -241,7 +241,7 @@ Two more things Bluetooth needs:
 - Bluetooth keyboards and mice cannot wake the machine from sleep.
 - HeliPort is not code-signed, and must be added to Login Items or Wi-Fi does not reconnect after a reboot.
 - HeliPort's disk image has a licence prompt that blocks `hdiutil attach` over SSH. Converting it first works: `hdiutil convert HeliPort.dmg -format UDTO -o HeliPort.cdr`.
-- The EFI grows from 8 MB to 35 MB, mostly Wi-Fi firmware.
+- The EFI is about 35 MB, most of it Wi-Fi firmware.
 
 ## 10. Keyboard Setup Assistant on every reconnect
 

@@ -16,7 +16,7 @@ This repo holds the scripts that build the EFI, a step-by-step install guide and
 | Memory / disk | 16 GB, WDC PC SN730 256 GB NVMe |
 | Ethernet | Intel I219-LM |
 | Audio | Realtek ALC235 (codec ID `10ec0235`) |
-| Wireless | Intel Wireless-AC 9560 (M.2, added later) |
+| Wireless | Intel Wireless-AC 9560 (M.2) |
 | Video outputs | 1 DisplayPort, 2 HDMI (one on the optional module) |
 | USB | 1 USB-C and 1 USB-A in front, 4 USB-A at the rear |
 
