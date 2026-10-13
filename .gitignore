@@ -1,0 +1,17 @@
+# Generated serials (SMBIOS serial, MLB, UUID, ROM). Never commit.
+smbios.json
+
+# ACPI tables and hardware info dumped from the machine. The dump includes the
+# embedded Windows licence key (MSDM) and the board serials.
+p330-dumps/
+
+# Downloads and everything built from them.
+downloads/
+build/
+efi/
+ssd-efi/
+usb/
+usb-map/
+
+__pycache__/
+*.pyc
