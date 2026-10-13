@@ -11,7 +11,7 @@ In the order they came up. Each entry gives what was seen, why it happened, what
 | 5 | [One wired mouse never worked](#5-one-wired-mouse-never-worked) | workaround |
 | 6 | [Sleep takes 30 seconds to start](#6-sleep-takes-30-seconds-to-start) | open |
 | 7 | [Monitor stays black after wake](#7-monitor-stays-black-after-wake) | resolved |
-| 8 | [Volume keys do nothing on HDMI audio](#8-volume-keys-do-nothing-on-hdmi-audio) | open |
+| 8 | [Volume keys do nothing on HDMI audio](#8-volume-keys-do-nothing-on-hdmi-audio) | resolved |
 | 9 | [Wi-Fi and Bluetooth on the Intel 9560](#9-wi-fi-and-bluetooth-on-the-intel-9560) | resolved |
 | 10 | [Keyboard Setup Assistant on every reconnect](#10-keyboard-setup-assistant-on-every-reconnect) | open |
 
@@ -97,12 +97,14 @@ Misc > Security > SecureBootModel = Disabled      (was Default)
 
 | USB 2 port | USB 3 port | Physical connector |
 | --- | --- | --- |
-| HS02 (2) | SS01 (17) | group 2 |
-| HS04 (4) | SS02 (18) | group 4 |
-| HS05 (5) | SS04 (20) | group 5 |
-| HS06 (6) | SS03 (19) | group 6 |
-| HS07 (7) | SS05 (21) | group 7 |
-| HS08 (8) | SS06 (22) | group 8 |
+| HS02 (2) | SS01 (17) | Front USB-A |
+| HS04 (4) | SS02 (18) | Front USB-C |
+| HS05 (5) | SS04 (20) | Rear USB-A 1 |
+| HS06 (6) | SS03 (19) | Rear USB-A 2 |
+| HS07 (7) | SS05 (21) | Rear USB-A 3 |
+| HS08 (8) | SS06 (22) | Rear USB-A 4 |
+
+Rear ports are numbered left to right, looking at the back of the machine.
 
 **Symptom.** With that 12-port map, the keyboard and mouse of the Intel AMT remote session (MeshCommander) stopped working. They had worked on the default map.
 
@@ -118,11 +120,9 @@ Misc > Security > SecureBootModel = Disabled      (was Default)
 
 That makes exactly 15.
 
-**Checked.** `ioreg` lists the 15 named ports. AMT input works. Devices plugged into four different ports appeared on the port numbers the table predicts.
+**Checked.** `ioreg` lists the 15 named ports. AMT input works. A USB 3 drive and then a USB 2 drive were plugged into all six ports in turn, and each landed on the port the table gives: 5 Gb/s on the `SS` entry, 480 Mb/s on the `HS` entry. A 300 MB file written to a drive and read back had a matching checksum on all six ports, at about 30 to 45 MB/s writing and 115 to 150 MB/s reading.
 
 **Notes.**
-- The firmware labels HS04 as USB-C, but a USB-A receiver was plugged into it. The connector types in the map are therefore not all right. Nothing misbehaves because of it.
-- USB 3 speed and the real USB-C port were not tested.
 - If you do not use Intel AMT, the two `USR` ports can be replaced by others.
 
 ## 5. One wired mouse never worked
@@ -168,7 +168,12 @@ Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)
 
 **A false alarm on the way.** The first tests looked as if sleep did not work at all: the screen went dark and came back 20 s later, and `pmset -g stats` showed `Sleep Count:0`. The keyboard was being pressed during the wait, which cancels sleep. Triggered with `pmset sleepnow` over SSH and hands off the keyboard, it slept: power LED blinking, fan stopped. The `pmset` settings in the guide were applied during that confusion and kept, because those features need Apple hardware.
 
-**Checked.** `pmset -g log` shows `Entering Sleep state` and `Wake from Normal Sleep`, with a wake time around 1.2 s.
+**Checked.** `pmset -g log` shows `Entering Sleep state` and `Wake from Normal Sleep`, with a wake time around 1.2 s. Idle sleep was tested too: the machine slept by itself and stayed asleep until woken.
+
+**Notes.**
+- After real keyboard or mouse input, idle sleep waits for the display sleep timer first. With display sleep at 10 minutes and system sleep at 1 minute, the machine sleeps about 10 minutes after the last input.
+- A key press on a USB keyboard, including one on a 2.4 GHz USB receiver, wakes the machine. The device must be plugged in before sleep starts. Bluetooth devices do not wake it. The power button always does.
+- On one morning, idle sleep was woken within seconds several times in a row, with the USB controller logged as the wake source. It did not happen again in later tests and the device was not identified.
 
 ## 7. Monitor stays black after wake
 
@@ -192,7 +197,7 @@ The boot argument `igfxonln=1` does the same.
 
 ## 8. Volume keys do nothing on HDMI audio
 
-**Status:** open
+**Status:** resolved
 
 **Symptom.** The keyboard's volume control works with the internal speaker and does nothing when the sound goes to the monitor over HDMI.
 
@@ -200,7 +205,7 @@ The boot argument `igfxonln=1` does the same.
 
 **Fix.** The MonitorControl app catches the volume keys and sets the monitor's own volume over DDC. It needs Accessibility access.
 
-**Checked.** Not yet. The app is installed, but whether DDC gets through on these HDMI ports is unconfirmed. If it does not, check the monitor's DDC/CI setting.
+**Checked.** With sound playing over HDMI, turning the keyboard's volume control down and up changed the loudness of the monitor, and MonitorControl's stored volume for the monitor moved between 38% and 100% at the same moments. If it does nothing on another monitor, check that monitor's DDC/CI setting.
 
 ## 9. Wi-Fi and Bluetooth on the Intel 9560
 
@@ -230,6 +235,8 @@ Two more things Bluetooth needs:
 
 **Notes.**
 - No AirDrop or Handoff with this driver.
+- Wi-Fi is slower than under Windows or Linux on the same card. Measured on a 5 GHz, 160 MHz link with two streams: about 150 Mbit/s down and 90 Mbit/s up, against 246 and 206 over Ethernet on the same line. No setting was found that improves it.
+- Bluetooth keyboards and mice cannot wake the machine from sleep.
 - HeliPort is not code-signed, and must be added to Login Items or Wi-Fi does not reconnect after a reboot.
 - HeliPort's disk image has a licence prompt that blocks `hdiutil attach` over SSH. Converting it first works: `hdiutil convert HeliPort.dmg -format UDTO -o HeliPort.cdr`.
 - The EFI grows from 8 MB to 35 MB, mostly Wi-Fi firmware.

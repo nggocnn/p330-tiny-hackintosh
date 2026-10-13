@@ -12,14 +12,16 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "usb-map" / "UTBMap.kext" / "Contents"
 
 USB3_A, USB_C_SWITCH, INTERNAL = 3, 9, 255
-# (name, controller port index, connector type, physical connector group)
+# (name, controller port index, connector type, physical connector)
+# Rear ports are numbered left to right, looking at the back of the machine.
+# Every pairing below was confirmed by plugging a USB 2 and a USB 3 drive into each port.
 PORTS = [
-    ("HS02", 2, USB3_A, "USB-A, group 2 (USB 2 side)"),
-    ("HS04", 4, USB_C_SWITCH, "USB-C front (USB 2 side)"),
-    ("HS05", 5, USB3_A, "USB-A, group 5 (USB 2 side)"),
-    ("HS06", 6, USB3_A, "USB-A, group 6 (USB 2 side)"),
-    ("HS07", 7, USB3_A, "USB-A, group 7 (USB 2 side)"),
-    ("HS08", 8, USB3_A, "USB-A, group 8 (USB 2 side)"),
+    ("HS02", 2, USB3_A, "Front USB-A (USB 2 side)"),
+    ("HS04", 4, USB_C_SWITCH, "Front USB-C (USB 2 side)"),
+    ("HS05", 5, USB3_A, "Rear USB-A 1 (USB 2 side)"),
+    ("HS06", 6, USB3_A, "Rear USB-A 2 (USB 2 side)"),
+    ("HS07", 7, USB3_A, "Rear USB-A 3 (USB 2 side)"),
+    ("HS08", 8, USB3_A, "Rear USB-A 4 (USB 2 side)"),
     # Bluetooth half of the Intel 9560 CNVi module in the M.2 slot. With this
     # entry the map is at macOS's 15-port limit.
     ("HS14", 14, INTERNAL, "Intel 9560 Bluetooth (internal)"),
@@ -27,12 +29,12 @@ PORTS = [
     # port 15 in macOS). Leaving these out kills MeshCommander input.
     ("USR1", 15, INTERNAL, "Intel AMT USB-R (KVM keyboard and mouse)"),
     ("USR2", 16, INTERNAL, "Intel AMT USB-R (storage redirection)"),
-    ("SS01", 17, USB3_A, "USB-A, group 2 (USB 3 side)"),
-    ("SS02", 18, USB_C_SWITCH, "USB-C front (USB 3 side)"),
-    ("SS03", 19, USB3_A, "USB-A, group 6 (USB 3 side)"),
-    ("SS04", 20, USB3_A, "USB-A, group 5 (USB 3 side)"),
-    ("SS05", 21, USB3_A, "USB-A, group 7 (USB 3 side)"),
-    ("SS06", 22, USB3_A, "USB-A, group 8 (USB 3 side)"),
+    ("SS01", 17, USB3_A, "Front USB-A (USB 3 side)"),
+    ("SS02", 18, USB_C_SWITCH, "Front USB-C (USB 3 side)"),
+    ("SS03", 19, USB3_A, "Rear USB-A 2 (USB 3 side)"),
+    ("SS04", 20, USB3_A, "Rear USB-A 1 (USB 3 side)"),
+    ("SS05", 21, USB3_A, "Rear USB-A 3 (USB 3 side)"),
+    ("SS06", 22, USB3_A, "Rear USB-A 4 (USB 3 side)"),
 ]
 
 

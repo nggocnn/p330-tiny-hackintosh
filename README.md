@@ -26,10 +26,12 @@ The ThinkCentre M720q and M920q share this platform, so most of this should carr
 | macOS 15.8.1 as `Macmini8,1`, boot from the internal SSD | works |
 | Graphics acceleration, HDMI video and HDMI audio | works |
 | Ethernet, internal speaker, microphone | works |
-| Sleep and wake | works, sleep takes 30 s to start |
-| USB, 15 mapped ports, Intel AMT remote keyboard and mouse | works |
-| Wi-Fi and Bluetooth (Intel 9560) | works through `itlwm` and HeliPort, no AirDrop or Handoff |
-| DisplayPort, second HDMI port, USB-C port, USB 3 speed | not tested |
+| Sleep and wake | works, sleep takes 30 s to start. USB keyboards wake it, Bluetooth ones do not |
+| USB 2 and USB 3 on all six ports (15 mapped ports), Intel AMT remote keyboard and mouse | works |
+| Wi-Fi and Bluetooth (Intel 9560) | works through `itlwm` and HeliPort, slower than Ethernet, no AirDrop or Handoff |
+| Volume keys on HDMI audio | works with the MonitorControl app |
+| Temperature and fan sensors | readable with the Stats app |
+| DisplayPort, second HDMI port | not tested |
 | Apple ID, iMessage, FaceTime | not tested |
 
 ## Quick start
