@@ -157,7 +157,7 @@ def main():
     igpu["force-online"] = on
     cfg["DeviceProperties"]["Add"] = {
         "PciRoot(0x0)/Pci(0x2,0x0)": igpu,
-        # AppleALC layout 17: "ALC235 for Lenovo ThinkCentre Tiny M720q".
+        # AppleALC layout 17 for the ALC235: speaker, microphone and HDMI audio work.
         "PciRoot(0x0)/Pci(0x1f,0x3)": {"layout-id": (17).to_bytes(4, "little")},
     }
     cfg["DeviceProperties"]["Delete"] = {}

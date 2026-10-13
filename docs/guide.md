@@ -91,7 +91,7 @@ What the config sets, and why:
 | Graphics | `AAPL,ig-platform-id` `07009B3E`, `framebuffer-stolenmem` `00003001` | Desktop UHD 630 with the default 32 MB of graphics memory |
 | Graphics | con1 and con2 typed HDMI with bus IDs 2 and 4 | HDMI is black without it, see [problem 1](problems.md#1-black-screen-when-the-graphics-driver-loads) |
 | Graphics | `force-online` | HDMI monitor stays black after wake without it, see [problem 7](problems.md#7-monitor-stays-black-after-wake) |
-| Audio | `layout-id` 17 | AppleALC's layout for the ThinkCentre Tiny M720q, same codec |
+| Audio | `layout-id` 17 | The AppleALC layout for the ALC235 that gives working speaker, microphone and HDMI audio on this board |
 | Security | `SecureBootModel` `Disabled` | The installer loops with `Default`, see [problem 3](problems.md#3-the-installer-reboots-into-the-same-stage-forever) |
 | NVRAM | two `bluetooth...` variables | Required by BlueToolFixup for Bluetooth |
 

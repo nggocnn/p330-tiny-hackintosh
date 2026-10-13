@@ -1,8 +1,8 @@
-# p330-tiny-hackintosh
+# macOS Sequoia on the Lenovo ThinkStation P330 Tiny
 
-macOS Sequoia on a Lenovo ThinkStation P330 Tiny, booted with OpenCore.
+An OpenCore hackintosh build for the P330 Tiny (i7-8700, UHD 630, Q370): macOS 15.8.1 as `Macmini8,1` with OpenCore 1.0.8.
 
-The EFI folder is not stored in this repo. Three Python scripts download pinned releases of OpenCore and the kexts and generate the EFI, so every setting is written down once, with the reason next to it.
+This repo holds the scripts that build the EFI, a step-by-step install guide and a log of every problem met on the way. The EFI folder itself is not stored here. Three Python scripts download pinned releases of OpenCore and the kexts and generate it, so every setting is written down once, with the reason next to it.
 
 - [docs/guide.md](docs/guide.md): how to build the EFI, install macOS and finish the setup.
 - [docs/problems.md](docs/problems.md): each problem met on the way, with its symptom, cause and fix.
@@ -19,8 +19,6 @@ The EFI folder is not stored in this repo. Three Python scripts download pinned 
 | Wireless | Intel Wireless-AC 9560 (M.2, added later) |
 | Video outputs | 1 DisplayPort, 2 HDMI (one on the optional module) |
 | USB | 1 USB-C and 1 USB-A in front, 4 USB-A at the rear |
-
-The ThinkCentre M720q and M920q share this platform, so most of this should carry over, but only the P330 Tiny was tested.
 
 ## Software
 
