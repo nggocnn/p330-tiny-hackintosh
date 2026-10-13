@@ -46,7 +46,9 @@ framebuffer-con2-busid   04000000
 
 **Notes.**
 - Which connector is which was worked out from two facts: under Linux the monitor was on `HDMI-A-2`, and under macOS on framebuffer 1.
-- The DisplayPort (con0) and the second HDMI port (con2) were not tested.
+- The second HDMI port (con2) works too, picture and sound. macOS treats the monitor on another port as a new sound output, so it has to be selected once under Sound settings. After that it is remembered per port.
+- Plugging the cable in takes about 10 seconds until the picture appears, on both HDMI ports. The log shows 3 seconds until the driver accepts the monitor and 3 more until it draws, with no errors. The rest is the monitor locking onto the signal. Waking from sleep is not affected.
+- The DisplayPort (con0) was not tested.
 - An active DisplayPort to HDMI adapter keeps the signal as DisplayPort and needs an unpatched connector.
 
 ## 2. Disk Utility shows no internal drive
