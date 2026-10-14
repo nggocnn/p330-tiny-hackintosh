@@ -32,7 +32,7 @@ The first attempt only changed the type of each connector to HDMI (`00080000`). 
 
 **Fix.** Set the HDMI type and the HDMI bus ID together. On this machine the DisplayPort is con0 and the two HDMI ports are con1 and con2, so only those two are patched:
 
-```conf
+```text
 framebuffer-con1-enable  01000000
 framebuffer-con1-type    00080000
 framebuffer-con1-busid   02000000
@@ -57,7 +57,7 @@ framebuffer-con2-busid   04000000
 
 **Symptom.** After the first stage, `macOS Installer` booted, printed pages of lines like the one below, and rebooted. Five times.
 
-```log
+```text
 patchd: _patchd_macos_copyfile_callback(172): CopyFile: Done copying /mnt5/softwareupdate/MSUPreservedBootObjects/Preboot/...
 ```
 
@@ -67,7 +67,7 @@ Two or three boots of `macOS Installer` are normal. What gave it away was the ti
 
 **Fix.**
 
-```txt
+```text
 Misc > Security > SecureBootModel = Disabled      (was Default)
 ```
 
@@ -125,12 +125,12 @@ That makes exactly 15.
 
 **Cause.** The mouse. macOS saw it connect and failed to read its descriptor, eight attempts each time:
 
-```conf
+```text
 kPortStatConnectCount = 8
 kPortStatEnumerationFailureCount = 8
 ```
 
-```log
+```text
 IOUSBHostDevice: device descriptor fragment is invalid
 IOUSBHostFamily::validateEndpointMaxPacketSize: endpoint 0x00 invalid wMaxPacketSize 0x0000
 AppleUSBHostPort::enumerateDeviceComplete_block_invoke: enumeration failed
@@ -150,7 +150,7 @@ A different mouse on the same port was recognised at once. Why this one answers 
 
 **Cause.** The power log names it on every sleep:
 
-```log
+```text
 Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)]
 ```
 
@@ -178,7 +178,7 @@ Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)
 
 **Fix.** WhateverGreen's switch for it, as a device property on the graphics chip:
 
-```conf
+```text
 force-online  01000000
 ```
 
@@ -219,7 +219,7 @@ Two more things Bluetooth needs:
 
 - NVRAM variables required by BlueToolFixup 2.7 and newer:
 
-  ```conf
+  ```text
   bluetoothExternalDongleFailed    00
   bluetoothInternalControllerInfo  0000000000000000000000000000
   ```
