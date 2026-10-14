@@ -13,6 +13,7 @@ In the order they came up. Each entry gives what was seen, why it happened, what
 | 7 | [Volume keys do nothing on HDMI audio](#7-volume-keys-do-nothing-on-hdmi-audio) | resolved |
 | 8 | [Wi-Fi and Bluetooth on the Intel 9560](#8-wi-fi-and-bluetooth-on-the-intel-9560) | resolved |
 | 9 | [Keyboard Setup Assistant on every reconnect](#9-keyboard-setup-assistant-on-every-reconnect) | open |
+| 10 | [Secure Boot is off](#10-secure-boot-is-off) | open |
 
 ## 1. Black screen when the graphics driver loads
 
@@ -256,3 +257,28 @@ Find the IDs with `hidutil list` (usage page 1, usage 6 is a keyboard) and conve
 **Checked.** Partly. The entries are stored and the assistant was not running afterwards. Whether it stays away on a reconnect is unconfirmed.
 
 **Notes.** A device can report a different product ID per mode, for example through its USB receiver and over Bluetooth. Each needs its own entry.
+
+## 10. Secure Boot is off
+
+**Status:** open, not planned for the near future
+
+**Background.** Both kinds of secure boot are turned off in this build:
+
+- UEFI Secure Boot in the BIOS. With it on, the firmware only starts boot files signed by a key it trusts. Lenovo ships only Microsoft's keys, so OpenCore does not start.
+- Apple Secure Boot, the OpenCore setting `Misc > Security > SecureBootModel`, which makes macOS check its own boot files the way a real Mac does. It is `Disabled` because the installer looped with `Default`, see problem 2.
+
+FileVault, the disk encryption, is off as well.
+
+**What already protects the system with all of them off.** The macOS system volume is sealed and signed by Apple, so a modified system file stops the boot. System Integrity Protection is on, so not even an administrator can change system files from inside macOS.
+
+**What each option would add.**
+
+| Option | Protects against | Cost |
+| --- | --- | --- |
+| Apple Secure Boot (`SecureBootModel` `Default`) | Tampered macOS boot files on the Preboot volume. Kexts injected by OpenCore are not covered | One setting, tested from the USB stick first. May bring the installer loop back |
+| UEFI Secure Boot with OpenCore Vault, plus a BIOS supervisor password | A persistent rootkit planted on the EFI partition, for example a malicious kext added by malware with root access | Own signing keys enrolled in the BIOS, and every kext or config change re-signed before the next boot. Whether this BIOS accepts custom keys was not checked |
+| FileVault | Theft of the machine or the SSD, or someone reading the drive from another system | A password at every power-on. A remote restart over SSH needs `sudo fdesetup authrestart` |
+
+**Decision.** Left off for now. For a desktop at home the gain is small: the sealed system volume and SIP already cover the common cases, and the threats the options add protection against are rare. UEFI Secure Boot with Vault would also add a signing step to every future change of the EFI.
+
+**If revisited.** In order of cost: FileVault plus a BIOS supervisor password, then Apple Secure Boot, tested from the stick with an installer build. UEFI Secure Boot with Vault only if the machine comes to hold something valuable enough to justify the re-signing.

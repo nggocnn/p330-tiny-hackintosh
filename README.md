@@ -59,6 +59,7 @@ Do not move to macOS Tahoe with this config. It dropped the `Macmini8,1` model a
 | Bluetooth devices cannot wake the machine | Use a USB keyboard or the power button |
 | No AirDrop or Handoff | Not supported by the Wi-Fi driver |
 | CPU reaches 100 °C under a full all-core load | Around 58 °C idle. Not compared with another operating system |
+| Secure Boot is off | Both UEFI and Apple Secure Boot. Left off on purpose for now, see [problem 10](docs/problems.md#10-secure-boot-is-off) |
 
 ### Not tested
 
