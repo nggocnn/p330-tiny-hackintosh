@@ -5,15 +5,14 @@ In the order they came up. Each entry gives what was seen, why it happened, what
 | # | Problem | Status |
 | --- | --- | --- |
 | 1 | [Black screen when the graphics driver loads](#1-black-screen-when-the-graphics-driver-loads) | resolved |
-| 2 | [Disk Utility shows no internal drive](#2-disk-utility-shows-no-internal-drive) | resolved |
-| 3 | [The installer reboots into the same stage forever](#3-the-installer-reboots-into-the-same-stage-forever) | resolved |
-| 4 | [USB port map, and the lost Intel AMT keyboard and mouse](#4-usb-port-map-and-the-lost-intel-amt-keyboard-and-mouse) | resolved |
-| 5 | [One wired mouse never worked](#5-one-wired-mouse-never-worked) | workaround |
-| 6 | [Sleep takes 30 seconds to start](#6-sleep-takes-30-seconds-to-start) | open |
-| 7 | [Monitor stays black after wake](#7-monitor-stays-black-after-wake) | resolved |
-| 8 | [Volume keys do nothing on HDMI audio](#8-volume-keys-do-nothing-on-hdmi-audio) | resolved |
-| 9 | [Wi-Fi and Bluetooth on the Intel 9560](#9-wi-fi-and-bluetooth-on-the-intel-9560) | resolved |
-| 10 | [Keyboard Setup Assistant on every reconnect](#10-keyboard-setup-assistant-on-every-reconnect) | open |
+| 2 | [The installer reboots into the same stage forever](#2-the-installer-reboots-into-the-same-stage-forever) | resolved |
+| 3 | [USB port map, and the lost Intel AMT keyboard and mouse](#3-usb-port-map-and-the-lost-intel-amt-keyboard-and-mouse) | resolved |
+| 4 | [One wired mouse never worked](#4-one-wired-mouse-never-worked) | workaround |
+| 5 | [Sleep takes 30 seconds to start](#5-sleep-takes-30-seconds-to-start) | open |
+| 6 | [Monitor stays black after wake](#6-monitor-stays-black-after-wake) | resolved |
+| 7 | [Volume keys do nothing on HDMI audio](#7-volume-keys-do-nothing-on-hdmi-audio) | resolved |
+| 8 | [Wi-Fi and Bluetooth on the Intel 9560](#8-wi-fi-and-bluetooth-on-the-intel-9560) | resolved |
+| 9 | [Keyboard Setup Assistant on every reconnect](#9-keyboard-setup-assistant-on-every-reconnect) | open |
 
 ## 1. Black screen when the graphics driver loads
 
@@ -33,7 +32,7 @@ The first attempt only changed the type of each connector to HDMI (`00080000`). 
 
 **Fix.** Set the HDMI type and the HDMI bus ID together. On this machine the DisplayPort is con0 and the two HDMI ports are con1 and con2, so only those two are patched:
 
-```
+```conf
 framebuffer-con1-enable  01000000
 framebuffer-con1-type    00080000
 framebuffer-con1-busid   02000000
@@ -45,31 +44,20 @@ framebuffer-con2-busid   04000000
 **Checked.** Picture at 1920x1080 in Recovery, in the installer and in macOS, with Metal 3 and HDMI audio. `ioreg` shows the display on `AppleIntelFramebuffer@1`.
 
 **Notes.**
+
 - Which connector is which was worked out from two facts: under Linux the monitor was on `HDMI-A-2`, and under macOS on framebuffer 1.
 - The second HDMI port (con2) works too, picture and sound. macOS treats the monitor on another port as a new sound output, so it has to be selected once under Sound settings. After that it is remembered per port.
 - Plugging the cable in takes about 10 seconds until the picture appears, on both HDMI ports. The log shows 3 seconds until the driver accepts the monitor and 3 more until it draws, with no errors. The rest is the monitor locking onto the signal. Waking from sleep is not affected.
 - The DisplayPort (con0) was not tested.
 - An active DisplayPort to HDMI adapter keeps the signal as DisplayPort and needs an unpatched connector.
 
-## 2. Disk Utility shows no internal drive
-
-**Status:** resolved
-
-**Symptom.** In Recovery, Disk Utility listed a small `NO NAME` volume and the recovery disk image, but not the SSD. It looked as if macOS could not see the NVMe drive.
-
-**Cause.** Disk Utility shows volumes by default, not drives. The SSD still held a Linux install, and the only part of it macOS can read is the old EFI partition, which is what `NO NAME` was. So the drive was detected all along.
-
-**Fix.** View > Show All Devices, then select the drive itself (the top line) and erase it as APFS with a GUID Partition Map. If the Scheme field is missing, a volume is selected, not the drive.
-
-**Checked.** The installer offered `Macintosh HD` afterwards.
-
-## 3. The installer reboots into the same stage forever
+## 2. The installer reboots into the same stage forever
 
 **Status:** resolved
 
 **Symptom.** After the first stage, `macOS Installer` booted, printed pages of lines like the one below, and rebooted. Five times.
 
-```
+```log
 patchd: _patchd_macos_copyfile_callback(172): CopyFile: Done copying /mnt5/softwareupdate/MSUPreservedBootObjects/Preboot/...
 ```
 
@@ -79,17 +67,18 @@ Two or three boots of `macOS Installer` are normal. What gave it away was the ti
 
 **Fix.**
 
-```
+```txt
 Misc > Security > SecureBootModel = Disabled      (was Default)
 ```
 
 **Checked.** The next boot of `macOS Installer` ran through to the "Select Your Country or Region" screen. Installed version 15.8.1.
 
 **Notes.**
+
 - The line `[AHCI][PRT] ... Port 3 - COMRESET did not proceed` in the same output is an empty SATA port and harmless.
 - Setting it back to `Default` after the install was not tried.
 
-## 4. USB port map, and the lost Intel AMT keyboard and mouse
+## 3. USB port map, and the lost Intel AMT keyboard and mouse
 
 **Status:** resolved
 
@@ -125,9 +114,10 @@ That makes exactly 15.
 **Checked.** `ioreg` lists the 15 named ports. AMT input works. A USB 3 drive and then a USB 2 drive were plugged into all six ports in turn, and each landed on the port the table gives: 5 Gb/s on the `SS` entry, 480 Mb/s on the `HS` entry. A 300 MB file written to a drive and read back had a matching checksum on all six ports, at about 30 to 45 MB/s writing and 115 to 150 MB/s reading.
 
 **Notes.**
+
 - If you do not use Intel AMT, the two `USR` ports can be replaced by others.
 
-## 5. One wired mouse never worked
+## 4. One wired mouse never worked
 
 **Status:** workaround
 
@@ -135,12 +125,12 @@ That makes exactly 15.
 
 **Cause.** The mouse. macOS saw it connect and failed to read its descriptor, eight attempts each time:
 
-```
+```conf
 kPortStatConnectCount = 8
 kPortStatEnumerationFailureCount = 8
 ```
 
-```
+```log
 IOUSBHostDevice: device descriptor fragment is invalid
 IOUSBHostFamily::validateEndpointMaxPacketSize: endpoint 0x00 invalid wMaxPacketSize 0x0000
 AppleUSBHostPort::enumerateDeviceComplete_block_invoke: enumeration failed
@@ -152,7 +142,7 @@ A different mouse on the same port was recognised at once. Why this one answers 
 
 **How to tell a dead port from a rejected device.** Read the per-port counters with `ioreg -r -c AppleUSB20XHCIPort -l | grep port-statistics`, and the kernel log with `sudo dmesg | grep -iE "usb|enumerat"`. A port with connects and enumeration failures is alive.
 
-## 6. Sleep takes 30 seconds to start
+## 5. Sleep takes 30 seconds to start
 
 **Status:** open
 
@@ -160,7 +150,7 @@ A different mouse on the same port was recognised at once. Why this one answers 
 
 **Cause.** The power log names it on every sleep:
 
-```
+```log
 Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)]
 ```
 
@@ -173,11 +163,12 @@ Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)
 **Checked.** `pmset -g log` shows `Entering Sleep state` and `Wake from Normal Sleep`, with a wake time around 1.2 s. Idle sleep was tested too: the machine slept by itself and stayed asleep until woken.
 
 **Notes.**
+
 - After real keyboard or mouse input, idle sleep waits for the display sleep timer first. With display sleep at 10 minutes and system sleep at 1 minute, the machine sleeps about 10 minutes after the last input.
 - A key press on a USB keyboard, including one on a 2.4 GHz USB receiver, wakes the machine. The device must be plugged in before sleep starts. Bluetooth devices do not wake it. The power button always does.
 - On one morning, idle sleep was woken within seconds several times in a row, with the USB controller logged as the wake source. It did not happen again in later tests and the device was not identified.
 
-## 7. Monitor stays black after wake
+## 6. Monitor stays black after wake
 
 **Status:** resolved
 
@@ -187,7 +178,7 @@ Kernel Client Acks  Delays to Sleep notifications: [wifip2pd timed out(30000 ms)
 
 **Fix.** WhateverGreen's switch for it, as a device property on the graphics chip:
 
-```
+```conf
 force-online  01000000
 ```
 
@@ -197,7 +188,7 @@ The boot argument `igfxonln=1` does the same.
 
 **Notes.** `force-online` can make macOS believe a monitor is attached to an unused output. If a phantom display appears, remove it. DisplayPort should not need it.
 
-## 8. Volume keys do nothing on HDMI audio
+## 7. Volume keys do nothing on HDMI audio
 
 **Status:** resolved
 
@@ -209,7 +200,7 @@ The boot argument `igfxonln=1` does the same.
 
 **Checked.** With sound playing over HDMI, turning the keyboard's volume control down and up changed the loudness of the monitor, and MonitorControl's stored volume for the monitor moved between 38% and 100% at the same moments. If it does nothing on another monitor, check that monitor's DDC/CI setting.
 
-## 9. Wi-Fi and Bluetooth on the Intel 9560
+## 8. Wi-Fi and Bluetooth on the Intel 9560
 
 **Status:** resolved
 
@@ -227,15 +218,18 @@ The boot argument `igfxonln=1` does the same.
 Two more things Bluetooth needs:
 
 - NVRAM variables required by BlueToolFixup 2.7 and newer:
-  ```
+
+  ```conf
   bluetoothExternalDongleFailed    00
   bluetoothInternalControllerInfo  0000000000000000000000000000
   ```
-- Its internal USB port, HS14, in the map (see problem 4).
+
+- Its internal USB port, HS14, in the map (see problem 3).
 
 **Checked.** All kexts loaded. The Wi-Fi interface got an address and reached the internet on its own. The Bluetooth controller went from `Address: NULL`, State Off, to a real address, State On. A keyboard and a mouse were paired.
 
 **Notes.**
+
 - No AirDrop or Handoff with this driver.
 - Wi-Fi is slower than under Windows or Linux on the same card. Measured on a 5 GHz, 160 MHz link with two streams: about 150 Mbit/s down and 90 Mbit/s up, against 246 and 206 over Ethernet on the same line. No setting was found that improves it.
 - Bluetooth keyboards and mice cannot wake the machine from sleep.
@@ -243,7 +237,7 @@ Two more things Bluetooth needs:
 - HeliPort's disk image has a licence prompt that blocks `hdiutil attach` over SSH. Converting it first works: `hdiutil convert HeliPort.dmg -format UDTO -o HeliPort.cdr`.
 - The EFI is about 35 MB, most of it Wi-Fi firmware.
 
-## 10. Keyboard Setup Assistant on every reconnect
+## 9. Keyboard Setup Assistant on every reconnect
 
 **Status:** open
 

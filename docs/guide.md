@@ -8,7 +8,7 @@ This walks through the whole build in order. Each step that went wrong the first
 - A second computer with Python 3 to build the EFI. Linux or WSL is assumed.
 - A USB stick of 4 GB or more.
 - A monitor. HDMI works with this config. DisplayPort is left at its native settings but was not tested.
-- A USB keyboard and mouse. Not every mouse works, see [problem 5](problems.md#5-one-wired-mouse-never-worked).
+- A USB keyboard and mouse. Not every mouse works, see [problem 4](problems.md#4-one-wired-mouse-never-worked).
 
 Installing erases the internal drive completely.
 
@@ -90,9 +90,9 @@ What the config sets, and why:
 | Kernel quirks | `AppleXcpmCfgLock`, `DisableIoMapper` | CFG Lock cannot be disabled, and VT-d stays on in the BIOS |
 | Graphics | `AAPL,ig-platform-id` `07009B3E`, `framebuffer-stolenmem` `00003001` | Desktop UHD 630 with the default 32 MB of graphics memory |
 | Graphics | con1 and con2 typed HDMI with bus IDs 2 and 4 | HDMI is black without it, see [problem 1](problems.md#1-black-screen-when-the-graphics-driver-loads) |
-| Graphics | `force-online` | HDMI monitor stays black after wake without it, see [problem 7](problems.md#7-monitor-stays-black-after-wake) |
+| Graphics | `force-online` | HDMI monitor stays black after wake without it, see [problem 6](problems.md#6-monitor-stays-black-after-wake) |
 | Audio | `layout-id` 17 | The AppleALC layout for the ALC235 that gives working speaker, microphone and HDMI audio on this board |
-| Security | `SecureBootModel` `Disabled` | The installer loops with `Default`, see [problem 3](problems.md#3-the-installer-reboots-into-the-same-stage-forever) |
+| Security | `SecureBootModel` `Disabled` | The installer loops with `Default`, see [problem 2](problems.md#2-the-installer-reboots-into-the-same-stage-forever) |
 | NVRAM | two `bluetooth...` variables | Required by BlueToolFixup for Bluetooth |
 
 Kexts: Lilu, VirtualSMC with SMCProcessor and SMCSuperIO, WhateverGreen, AppleALC, IntelMausi, NVMeFix, itlwm, IntelBTPatcher, IntelBluetoothFirmware, BlueToolFixup, USBToolBox with a map.
@@ -115,7 +115,7 @@ Format the stick as FAT32 and copy both folders, `EFI` and `com.apple.recovery.b
 
 1. Plug in Ethernet, monitor, keyboard and the stick. Power on, press F12 and choose the stick.
 2. In the OpenCore menu choose the entry marked `(dmg)`. That is the recovery image. Scrolling text is expected.
-3. In Recovery open Disk Utility and choose **View > Show All Devices**. Without it the internal drive is not listed, see [problem 2](problems.md#2-disk-utility-shows-no-internal-drive).
+3. In Recovery open Disk Utility and choose **View > Show All Devices**. Without it the internal drive is not listed. It shows volumes by default, and a drive that still holds another system has no volume macOS can read.
 4. Select the drive itself (the top line), click Erase: name `Macintosh HD`, format APFS, scheme GUID Partition Map.
 5. Quit Disk Utility and choose Reinstall macOS Sequoia.
 6. The machine reboots several times. Boot the stick each time and pick `macOS Installer`, later `Macintosh HD`. Do not pick the `(dmg)` entry again, which restarts from the beginning.
@@ -147,13 +147,13 @@ sudo pmset -a hibernatemode 0 standby 0 autopoweroff 0 powernap 0 proximitywake 
 sudo rm -f /var/vm/sleepimage
 ```
 
-Sleep works after that, but takes 30 s to start, see [problem 6](problems.md#6-sleep-takes-30-seconds-to-start). Undo with `sudo pmset -a restoredefaults`.
+Sleep works after that, but takes 30 s to start, see [problem 5](problems.md#5-sleep-takes-30-seconds-to-start). Undo with `sudo pmset -a restoredefaults`.
 
-**Wi-Fi.** The Intel card appears as an extra Ethernet interface. Install the HeliPort app to choose a network, and add it under System Settings > General > Login Items so it reconnects after a reboot. HeliPort is not code-signed. See [problem 9](problems.md#9-wi-fi-and-bluetooth-on-the-intel-9560).
+**Wi-Fi.** The Intel card appears as an extra Ethernet interface. Install the HeliPort app to choose a network, and add it under System Settings > General > Login Items so it reconnects after a reboot. HeliPort is not code-signed. See [problem 8](problems.md#8-wi-fi-and-bluetooth-on-the-intel-9560).
 
 **Bluetooth.** Works from System Settings once the kexts are loaded.
 
-**Volume keys on HDMI.** macOS has no volume control for HDMI audio. The MonitorControl app sets the monitor's own volume from the keyboard, see [problem 8](problems.md#8-volume-keys-do-nothing-on-hdmi-audio).
+**Volume keys on HDMI.** macOS has no volume control for HDMI audio. The MonitorControl app sets the monitor's own volume from the keyboard, see [problem 7](problems.md#7-volume-keys-do-nothing-on-hdmi-audio).
 
 **Apple ID.** Before signing in, look up the generated serial on Apple's coverage page. It must come back as not valid, meaning no real Mac owns it.
 
@@ -172,7 +172,7 @@ All of these run without `sudo` on the Mac:
 
 ## 11. Changing the USB map
 
-`build-usbmap.py` holds the port list as a table of name, controller port number, connector type and a comment. macOS allows 15 ports and the list uses all 15, so adding one means removing another. The port numbers come from the firmware's table, see [problem 4](problems.md#4-usb-port-map-and-the-lost-intel-amt-keyboard-and-mouse). After editing, run `build-usbmap.py`, then `build-efi.py`, then install as in step 8.
+`build-usbmap.py` holds the port list as a table of name, controller port number, connector type and a comment. macOS allows 15 ports and the list uses all 15, so adding one means removing another. The port numbers come from the firmware's table, see [problem 3](problems.md#3-usb-port-map-and-the-lost-intel-amt-keyboard-and-mouse). After editing, run `build-usbmap.py`, then `build-efi.py`, then install as in step 8.
 
 ## 12. Updates
 
